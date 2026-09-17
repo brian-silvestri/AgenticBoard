@@ -153,6 +153,8 @@ public class TaskService : ITaskService
         }
 
         var tasks = await query
+            .OrderBy(t => t.Status)
+            .ThenByDescending(t => t.CreatedAt)
             .Select(t => new TaskItemDto(
                 t.Id,
                 t.ProjectId,
@@ -168,8 +170,6 @@ public class TaskService : ITaskService
                 t.UpdatedAt,
                 t.Comments.Count
             ))
-            .OrderBy(t => t.Status)
-            .ThenByDescending(t => t.CreatedAt)
             .ToListAsync(cancellationToken);
 
         return tasks;
