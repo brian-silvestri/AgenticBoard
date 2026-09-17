@@ -3,8 +3,9 @@ import { CommonModule } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { DragDropModule, CdkDragDrop, moveItemInArray, transferArrayItem } from '@angular/cdk/drag-drop';
 import { ProjectDetail } from '../../../core/models/project.models';
-import { TaskItem, TaskItemStatus, TaskPriority } from '../../../core/models/task.models';
+import { TaskItem, TaskItemStatus, TaskPriority, TaskComment } from '../../../core/models/task.models';
 import { TaskService } from '../../../core/services/task.service';
+import { CommentService } from '../../../core/services/comment.service';
 
 interface KanbanColumn {
   id: TaskItemStatus;
@@ -212,109 +213,169 @@ interface KanbanColumn {
 
       <!-- Task Detail / Edit Modal -->
       @if (selectedTask(); as task) {
-        <div class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm">
-          <div class="bg-slate-900 border border-slate-800 rounded-2xl w-full max-w-lg p-6 shadow-2xl relative">
-            <div class="flex items-start justify-between gap-4 mb-4">
+        <div class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm overflow-y-auto">
+          <div class="bg-slate-900 border border-slate-800 rounded-2xl w-full max-w-2xl p-6 shadow-2xl relative my-8 max-h-[90vh] flex flex-col">
+            <div class="flex items-start justify-between gap-4 mb-4 shrink-0 pb-3 border-b border-slate-800">
               <div>
                 <span class="text-xs font-bold text-indigo-400">Task #{{ task.id }}</span>
-                <h3 class="text-lg font-bold text-white mt-1">{{ task.title }}</h3>
+                <h3 class="text-lg font-bold text-white mt-0.5">{{ task.title }}</h3>
               </div>
               <button (click)="selectedTask.set(null)" class="text-slate-400 hover:text-white text-xl leading-none">&times;</button>
             </div>
 
-            <form [formGroup]="editTaskForm" (ngSubmit)="onUpdateTask(task.id)" class="space-y-4">
-              <div>
-                <label for="ed-title" class="block text-xs font-semibold uppercase text-slate-300 mb-1">Title</label>
-                <input
-                  id="ed-title"
-                  type="text"
-                  formControlName="title"
-                  class="w-full px-3.5 py-2 rounded-xl bg-slate-950 border border-slate-700 text-white text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                />
-              </div>
-
-              <div>
-                <label for="ed-desc" class="block text-xs font-semibold uppercase text-slate-300 mb-1">Description</label>
-                <textarea
-                  id="ed-desc"
-                  rows="3"
-                  formControlName="description"
-                  class="w-full px-3.5 py-2 rounded-xl bg-slate-950 border border-slate-700 text-white text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                ></textarea>
-              </div>
-
-              <div class="grid grid-cols-3 gap-3">
+            <div class="overflow-y-auto pr-1 flex-1 space-y-6">
+              <form [formGroup]="editTaskForm" (ngSubmit)="onUpdateTask(task.id)" class="space-y-4">
                 <div>
-                  <label for="ed-status" class="block text-xs font-semibold uppercase text-slate-300 mb-1">Status</label>
-                  <select
-                    id="ed-status"
-                    formControlName="status"
-                    class="w-full px-3.5 py-2 rounded-xl bg-slate-950 border border-slate-700 text-white text-xs focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                  >
-                    <option value="Backlog">Backlog</option>
-                    <option value="Todo">Todo</option>
-                    <option value="InProgress">In Progress</option>
-                    <option value="Review">Review</option>
-                    <option value="Done">Done</option>
-                  </select>
+                  <label for="ed-title" class="block text-xs font-semibold uppercase text-slate-300 mb-1">Title</label>
+                  <input
+                    id="ed-title"
+                    type="text"
+                    formControlName="title"
+                    class="w-full px-3.5 py-2 rounded-xl bg-slate-950 border border-slate-700 text-white text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                  />
                 </div>
 
                 <div>
-                  <label for="ed-prio" class="block text-xs font-semibold uppercase text-slate-300 mb-1">Priority</label>
-                  <select
-                    id="ed-prio"
-                    formControlName="priority"
-                    class="w-full px-3.5 py-2 rounded-xl bg-slate-950 border border-slate-700 text-white text-xs focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                  >
-                    <option value="Low">Low</option>
-                    <option value="Medium">Medium</option>
-                    <option value="High">High</option>
-                    <option value="Critical">Critical</option>
-                  </select>
+                  <label for="ed-desc" class="block text-xs font-semibold uppercase text-slate-300 mb-1">Description</label>
+                  <textarea
+                    id="ed-desc"
+                    rows="3"
+                    formControlName="description"
+                    class="w-full px-3.5 py-2 rounded-xl bg-slate-950 border border-slate-700 text-white text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                  ></textarea>
                 </div>
 
-                <div>
-                  <label for="ed-assignee" class="block text-xs font-semibold uppercase text-slate-300 mb-1">Assignee</label>
-                  <select
-                    id="ed-assignee"
-                    formControlName="assignedUserId"
-                    class="w-full px-3.5 py-2 rounded-xl bg-slate-950 border border-slate-700 text-white text-xs focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                  >
-                    <option [ngValue]="null">Unassigned</option>
-                    @for (member of project.members; track member.userId) {
-                      <option [ngValue]="member.userId">{{ member.fullName }}</option>
-                    }
-                  </select>
+                <div class="grid grid-cols-3 gap-3">
+                  <div>
+                    <label for="ed-status" class="block text-xs font-semibold uppercase text-slate-300 mb-1">Status</label>
+                    <select
+                      id="ed-status"
+                      formControlName="status"
+                      class="w-full px-3.5 py-2 rounded-xl bg-slate-950 border border-slate-700 text-white text-xs focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                    >
+                      <option value="Backlog">Backlog</option>
+                      <option value="Todo">Todo</option>
+                      <option value="InProgress">In Progress</option>
+                      <option value="Review">Review</option>
+                      <option value="Done">Done</option>
+                    </select>
+                  </div>
+
+                  <div>
+                    <label for="ed-prio" class="block text-xs font-semibold uppercase text-slate-300 mb-1">Priority</label>
+                    <select
+                      id="ed-prio"
+                      formControlName="priority"
+                      class="w-full px-3.5 py-2 rounded-xl bg-slate-950 border border-slate-700 text-white text-xs focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                    >
+                      <option value="Low">Low</option>
+                      <option value="Medium">Medium</option>
+                      <option value="High">High</option>
+                      <option value="Critical">Critical</option>
+                    </select>
+                  </div>
+
+                  <div>
+                    <label for="ed-assignee" class="block text-xs font-semibold uppercase text-slate-300 mb-1">Assignee</label>
+                    <select
+                      id="ed-assignee"
+                      formControlName="assignedUserId"
+                      class="w-full px-3.5 py-2 rounded-xl bg-slate-950 border border-slate-700 text-white text-xs focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                    >
+                      <option [ngValue]="null">Unassigned</option>
+                      @for (member of project.members; track member.userId) {
+                        <option [ngValue]="member.userId">{{ member.fullName }}</option>
+                      }
+                    </select>
+                  </div>
                 </div>
-              </div>
 
-              <div class="flex items-center justify-between pt-4 border-t border-slate-800">
-                <button
-                  type="button"
-                  (click)="onDeleteTask(task.id)"
-                  class="px-3.5 py-2 rounded-xl border border-rose-500/30 text-rose-400 hover:bg-rose-500/10 text-xs font-semibold transition-colors"
-                >
-                  Delete Task
-                </button>
-
-                <div class="flex items-center gap-2">
+                <div class="flex items-center justify-between pt-4 border-t border-slate-800">
                   <button
                     type="button"
-                    (click)="selectedTask.set(null)"
-                    class="px-4 py-2 rounded-xl border border-slate-700 text-slate-300 text-xs font-semibold hover:bg-slate-800 transition-colors"
+                    (click)="onDeleteTask(task.id)"
+                    class="px-3.5 py-2 rounded-xl border border-rose-500/30 text-rose-400 hover:bg-rose-500/10 text-xs font-semibold transition-colors"
                   >
-                    Close
+                    Delete Task
                   </button>
-                  <button
-                    type="submit"
-                    [disabled]="editTaskForm.invalid || isSubmitting()"
-                    class="px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold shadow-lg shadow-indigo-600/30 disabled:opacity-50 transition-all"
-                  >
-                    Save Changes
-                  </button>
+
+                  <div class="flex items-center gap-2">
+                    <button
+                      type="button"
+                      (click)="selectedTask.set(null)"
+                      class="px-4 py-2 rounded-xl border border-slate-700 text-slate-300 text-xs font-semibold hover:bg-slate-800 transition-colors"
+                    >
+                      Close
+                    </button>
+                    <button
+                      type="submit"
+                      [disabled]="editTaskForm.invalid || isSubmitting()"
+                      class="px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold shadow-lg shadow-indigo-600/30 disabled:opacity-50 transition-all"
+                    >
+                      {{ isSubmitting() ? 'Saving...' : 'Save Changes' }}
+                    </button>
+                  </div>
                 </div>
+              </form>
+
+              <!-- Discussion / Comments Section -->
+              <div class="pt-4 border-t border-slate-800 space-y-4">
+                <div class="flex items-center justify-between">
+                  <h4 class="text-xs font-bold uppercase tracking-wider text-slate-300 flex items-center gap-2">
+                    <span>Discussion</span>
+                    <span class="px-2 py-0.5 rounded-full bg-slate-800 text-[10px] text-slate-400">{{ taskComments().length }}</span>
+                  </h4>
+                </div>
+
+                <!-- Add Comment Input -->
+                <div class="space-y-2">
+                  <textarea
+                    [value]="newCommentText()"
+                    (input)="newCommentText.set($any($event.target).value)"
+                    placeholder="Write a comment or status update..."
+                    rows="2"
+                    class="w-full px-3.5 py-2 rounded-xl bg-slate-950 border border-slate-700 text-white text-xs focus:outline-none focus:ring-2 focus:ring-indigo-500 resize-none"
+                  ></textarea>
+                  <div class="flex justify-end">
+                    <button
+                      type="button"
+                      (click)="onAddComment(task.id)"
+                      [disabled]="!newCommentText().trim() || isPostingComment()"
+                      class="px-3.5 py-1.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold disabled:opacity-50 transition-all flex items-center gap-1.5"
+                    >
+                      <span>{{ isPostingComment() ? 'Posting...' : 'Post Comment' }}</span>
+                    </button>
+                  </div>
+                </div>
+
+                <!-- Comments List -->
+                @if (isLoadingComments()) {
+                  <div class="space-y-2 py-2">
+                    <div class="h-10 bg-slate-800/60 rounded-xl animate-pulse"></div>
+                    <div class="h-10 bg-slate-800/60 rounded-xl animate-pulse"></div>
+                  </div>
+                } @else if (taskComments().length === 0) {
+                  <p class="text-xs text-slate-500 italic py-2 text-center">No comments yet. Start the conversation!</p>
+                } @else {
+                  <div class="space-y-3 pt-1">
+                    @for (comment of taskComments(); track comment.id) {
+                      <div class="bg-slate-950/60 border border-slate-800/80 rounded-xl p-3 space-y-1">
+                        <div class="flex items-center justify-between">
+                          <div class="flex items-center gap-2">
+                            <div class="w-5 h-5 rounded-full bg-indigo-600/30 border border-indigo-500/30 flex items-center justify-center text-[10px] font-bold text-indigo-300">
+                              {{ getInitials(comment.authorName) }}
+                            </div>
+                            <span class="text-xs font-semibold text-white">{{ comment.authorName }}</span>
+                          </div>
+                          <span class="text-[10px] text-slate-400">{{ comment.createdAt | date:'MMM d, h:mm a' }}</span>
+                        </div>
+                        <p class="text-xs text-slate-300 pl-7 leading-relaxed whitespace-pre-wrap">{{ comment.text }}</p>
+                      </div>
+                    }
+                  </div>
+                }
               </div>
-            </form>
+            </div>
           </div>
         </div>
       }
@@ -325,6 +386,7 @@ export class KanbanBoardComponent implements OnInit {
   @Input({ required: true }) project!: ProjectDetail;
 
   private taskService = inject(TaskService);
+  private commentService = inject(CommentService);
   private fb = inject(FormBuilder);
 
   readonly columns: KanbanColumn[] = [
@@ -337,6 +399,10 @@ export class KanbanBoardComponent implements OnInit {
 
   allTasks = signal<TaskItem[]>([]);
   selectedTask = signal<TaskItem | null>(null);
+  taskComments = signal<TaskComment[]>([]);
+  isLoadingComments = signal<boolean>(false);
+  newCommentText = signal<string>('');
+  isPostingComment = signal<boolean>(false);
   showCreateModal = signal<boolean>(false);
   isSubmitting = signal<boolean>(false);
   errorMessage = signal<string | null>(null);
@@ -428,12 +494,48 @@ export class KanbanBoardComponent implements OnInit {
 
   openDetailModal(task: TaskItem): void {
     this.selectedTask.set(task);
+    this.taskComments.set([]);
+    this.newCommentText.set('');
     this.editTaskForm.patchValue({
       title: task.title,
       description: task.description || '',
       status: task.status,
       priority: task.priority,
       assignedUserId: task.assignedUserId || null
+    });
+    this.loadComments(task.id);
+  }
+
+  loadComments(taskId: number): void {
+    this.isLoadingComments.set(true);
+    this.commentService.getComments(taskId).subscribe({
+      next: (comments) => {
+        this.taskComments.set(comments);
+        this.isLoadingComments.set(false);
+      },
+      error: () => {
+        this.isLoadingComments.set(false);
+      }
+    });
+  }
+
+  onAddComment(taskId: number): void {
+    const text = this.newCommentText().trim();
+    if (!text || this.isPostingComment()) return;
+
+    this.isPostingComment.set(true);
+    this.commentService.addComment(taskId, text).subscribe({
+      next: (created) => {
+        this.taskComments.update(list => [...list, created]);
+        this.newCommentText.set('');
+        this.isPostingComment.set(false);
+        // Increment comment count in task list
+        this.allTasks.update(list => list.map(t => t.id === taskId ? { ...t, commentCount: (t.commentCount || 0) + 1 } : t));
+      },
+      error: (err) => {
+        this.isPostingComment.set(false);
+        this.errorMessage.set(err?.error?.detail || 'Failed to post comment.');
+      }
     });
   }
 

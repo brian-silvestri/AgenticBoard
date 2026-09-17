@@ -5,11 +5,12 @@ import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ProjectService } from '../../../core/services/project.service';
 import { ProjectMembersComponent } from '../project-members/project-members.component';
 import { KanbanBoardComponent } from '../../kanban/kanban-board/kanban-board.component';
+import { ProjectActivityComponent } from '../project-activity/project-activity.component';
 
 @Component({
   selector: 'app-project-detail',
   standalone: true,
-  imports: [CommonModule, RouterLink, ReactiveFormsModule, ProjectMembersComponent, KanbanBoardComponent],
+  imports: [CommonModule, RouterLink, ReactiveFormsModule, ProjectMembersComponent, KanbanBoardComponent, ProjectActivityComponent],
   template: `
     @if (projectService.isLoading() && !projectService.currentProject()) {
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
@@ -101,17 +102,7 @@ import { KanbanBoardComponent } from '../../kanban/kanban-board/kanban-board.com
         } @else if (activeTab() === 'board') {
           <app-kanban-board [project]="project" />
         } @else if (activeTab() === 'activity') {
-          <div id="activity-container">
-            <div class="text-center py-12 bg-slate-900/40 border border-slate-800/80 rounded-2xl p-8">
-              <div class="w-12 h-12 rounded-xl bg-purple-500/10 text-purple-400 flex items-center justify-center mx-auto mb-3">
-                <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-              </div>
-              <h3 class="text-lg font-semibold text-white">Activity Trail</h3>
-              <p class="text-slate-400 text-xs mt-1 max-w-sm mx-auto">Audit logging records all project events and state changes.</p>
-            </div>
-          </div>
+          <app-project-activity [projectId]="project.id" />
         }
 
         <!-- Edit Project Modal -->
