@@ -1,5 +1,6 @@
 using System.Reflection;
 using AgenticBoard.Application.Features.Auth.Services;
+using AgenticBoard.Application.Features.Projects.Services;
 using FluentValidation;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -11,6 +12,7 @@ public static class DependencyInjection
     {
         services.AddValidatorsFromAssembly(Assembly.GetExecutingAssembly());
         services.AddScoped<IAuthService, AuthService>();
+        services.AddScoped<IProjectService, ProjectService>();
 
         return services;
     }
