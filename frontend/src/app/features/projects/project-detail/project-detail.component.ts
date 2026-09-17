@@ -4,11 +4,12 @@ import { ActivatedRoute, RouterLink } from '@angular/router';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ProjectService } from '../../../core/services/project.service';
 import { ProjectMembersComponent } from '../project-members/project-members.component';
+import { KanbanBoardComponent } from '../../kanban/kanban-board/kanban-board.component';
 
 @Component({
   selector: 'app-project-detail',
   standalone: true,
-  imports: [CommonModule, RouterLink, ReactiveFormsModule, ProjectMembersComponent],
+  imports: [CommonModule, RouterLink, ReactiveFormsModule, ProjectMembersComponent, KanbanBoardComponent],
   template: `
     @if (projectService.isLoading() && !projectService.currentProject()) {
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
@@ -98,18 +99,7 @@ import { ProjectMembersComponent } from '../project-members/project-members.comp
         @if (activeTab() === 'members') {
           <app-project-members [project]="project" />
         } @else if (activeTab() === 'board') {
-          <div id="board-container">
-            <!-- Kanban Board Placeholder (Will embed KanbanBoardComponent in Phase 4/5) -->
-            <div class="text-center py-12 bg-slate-900/40 border border-slate-800/80 rounded-2xl p-8">
-              <div class="w-12 h-12 rounded-xl bg-indigo-500/10 text-indigo-400 flex items-center justify-center mx-auto mb-3">
-                <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17V7m0 10a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h2a2 2 0 012 2m0 10a2 2 0 002 2h2a2 2 0 002-2V7a2 2 0 00-2-2h-2a2 2 0 00-2 2m7 10a2 2 0 002 2h2a2 2 0 002-2V7a2 2 0 00-2-2h-2a2 2 0 00-2 2" />
-                </svg>
-              </div>
-              <h3 class="text-lg font-semibold text-white">Board Ready</h3>
-              <p class="text-slate-400 text-xs mt-1 max-w-sm mx-auto">Tasks and drag-and-drop workflow configured for this project workspace.</p>
-            </div>
-          </div>
+          <app-kanban-board [project]="project" />
         } @else if (activeTab() === 'activity') {
           <div id="activity-container">
             <div class="text-center py-12 bg-slate-900/40 border border-slate-800/80 rounded-2xl p-8">
