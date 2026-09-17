@@ -8,42 +8,56 @@
 [![Docker](https://img.shields.io/badge/Docker-Enabled-2496ED?logo=docker&logoColor=white)](https://www.docker.com/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
-> **AgenticBoard** is a modern, enterprise-ready project and task management system (inspired by Jira/Trello) built to demonstrate professional Full-Stack engineering and an exemplary **spec-driven, AI-first / agentic development methodology**.
+> **AgenticBoard** is an enterprise-grade project and task management system (inspired by Jira and Linear) built to demonstrate modern full-stack software engineering and an exemplary **spec-driven, AI-first / agentic development lifecycle**.
 
 ---
 
 ## 🎯 Why This Project Exists
 
-In modern engineering, the integration of AI coding agents into the software development lifecycle requires rigorous engineering discipline, rather than unchecked code generation.
+In contemporary software engineering, leveraging AI coding agents requires engineering rigor, verifiable constraints, and reproducible validation, rather than blind code generation.
 
-**AgenticBoard** was created to demonstrate:
-- **Full-Stack Mastery**: High-performance backend in **ASP.NET Core .NET 8** with Clean Architecture paired with a reactive, modular **Angular 20** frontend using Standalone Components, Signals, and Tailwind CSS.
-- **Spec-Driven Engineering**: No code is written in isolation. Every feature originates from an explicit specification, progresses through a technical architecture plan, and is verified against strict business rules.
-- **AI-First / Agentic Workflow**: Coding agents are treated as high-velocity implementers operating within strict constraints ([`AGENTS.md`](./AGENTS.md)), producing automated tests, performing static code reviews, and leaving an auditable review trail.
-- **Enterprise Standards**: Robust JWT authentication, project-membership multi-tenancy, granular RBAC (Owner vs. Member), audit trails, RFC 7807 `ProblemDetails`, Docker containerization, and GitHub Actions CI.
+**AgenticBoard** demonstrates:
+- **Full-Stack Craftsmanship**: High-performance backend in **ASP.NET Core .NET 8** with Clean Architecture paired with a reactive, modern **Angular 20** frontend using Standalone Components, Angular Signals, Angular CDK Drag & Drop, and Tailwind CSS.
+- **Spec-Driven Engineering**: No code is written in isolation. Every feature originates from an explicit specification (`/specs`), progresses through a technical plan (`/plans`), and is verified against strict business rules.
+- **AI-First / Agentic Governance**: Coding agents operate within strict guardrails ([`AGENTS.md`](./AGENTS.md)), producing automated tests, performing static code reviews (`/reviews`), and leaving an auditable record of all changes.
+- **Enterprise Standards**: Robust JWT authentication, project-membership multi-tenancy, granular RBAC (Owner vs. Member), audit trails, RFC 7807 `ProblemDetails`, Docker orchestration, and automated CI pipelines.
 
 ---
 
 ## 🔄 Agentic Development Workflow
 
-This project demonstrates a **spec-driven, AI-first software development workflow**. Coding agents are utilized for structured implementation only after requirements and technical architecture plans are firmly established. Generated changes are continuously validated through automated unit/integration tests, static analysis, multi-stage code reviews, and human engineering judgment.
+This repository demonstrates the complete lifecycle of **spec-driven, AI-assisted engineering**:
 
 ```mermaid
 flowchart TD
-    A["1. Specification (/specs)"] --> B["2. Technical Analysis"]
-    B --> C["3. Implementation Plan (/plans)"]
-    C --> D["4. Agent Implementation (feature/branch)"]
-    D --> E["5. Automated Tests (Backend & Frontend)"]
+    A["1. Specification (/specs)"] --> B["2. Technical Architecture & Plan (/plans)"]
+    B --> C["3. Agent Branch Implementation (feature/branch)"]
+    C --> D["4. Automated Tests (Unit & Integration)"]
+    D --> E["5. Production Builds & Verification"]
     E --> F["6. AI Code Review (/reviews)"]
-    F --> G["7. Human Review & Refinement"]
-    G --> H["8. Merge to develop & CI/CD Validation"]
+    F --> G["7. Merge to develop & CI Validation"]
+    G --> H["8. Final Human Approval & Merge to main"]
 ```
+
+### Traceability Matrix
+
+| Feature | Specification | Implementation Plan | AI Code Review | Status |
+| :--- | :--- | :--- | :--- | :--- |
+| **0. Foundation & CI** | Architecture Spec | [`plans/000-foundation-plan.md`](plans/000-foundation-plan.md) | [`reviews/000-foundation-infrastructure-review.md`](reviews/000-foundation-infrastructure-review.md) | Complete |
+| **1. Authentication & Identity** | [`specs/001-authentication.md`](specs/001-authentication.md) | [`plans/001-authentication-plan.md`](plans/001-authentication-plan.md) | [`reviews/001-authentication-review.md`](reviews/001-authentication-review.md) | Complete |
+| **2. Project Management** | [`specs/002-project-management.md`](specs/002-project-management.md) | [`plans/002-project-management-plan.md`](plans/002-project-management-plan.md) | [`reviews/002-project-management-review.md`](reviews/002-project-management-review.md) | Complete |
+| **3. Task Management** | [`specs/003-task-management.md`](specs/003-task-management.md) | [`plans/003-task-management-plan.md`](plans/003-task-management-plan.md) | [`reviews/003-task-management-review.md`](reviews/003-task-management-review.md) | Complete |
+| **4. Kanban Board** | [`specs/004-kanban-board.md`](specs/004-kanban-board.md) | [`plans/004-kanban-board-plan.md`](plans/004-kanban-board-plan.md) | [`reviews/004-kanban-board-review.md`](reviews/004-kanban-board-review.md) | Complete |
+| **5. Task Comments** | [`specs/005-comments.md`](specs/005-comments.md) | [`plans/005-comments-plan.md`](plans/005-comments-plan.md) | [`reviews/005-comments-review.md`](reviews/005-comments-review.md) | Complete |
+| **6. Audit Trail** | [`specs/006-audit-log.md`](specs/006-audit-log.md) | [`plans/006-audit-log-plan.md`](plans/006-audit-log-plan.md) | [`reviews/006-audit-log-review.md`](reviews/006-audit-log-review.md) | Complete |
+| **Final Architecture Review** | Architecture Audit | [`plans/007-devops-and-polish-plan.md`](plans/007-devops-and-polish-plan.md) | [`reviews/final-architecture-review.md`](reviews/final-architecture-review.md) | Complete |
+| **Final Security Audit** | Security Standard | OWASP Top 10 | [`reviews/final-security-review.md`](reviews/final-security-review.md) | Complete |
 
 ---
 
 ## 🏗 System Architecture
 
-The backend adheres strictly to **Clean Architecture** principles, enforcing separation of concerns and dependency inversion.
+The backend adheres strictly to **Clean Architecture** principles, enforcing clear boundaries and dependency inversion.
 
 ```mermaid
 graph TD
@@ -56,87 +70,84 @@ graph TD
 ```
 
 ### Layer Breakdown
-1. **AgenticBoard.Domain**: Pure business entities (`User`, `Project`, `ProjectMember`, `TaskItem`, `TaskComment`, `AuditLog`), enums, and domain invariants. Zero third-party dependencies.
-2. **AgenticBoard.Application**: Application services, CQRS-style handlers, data transfer objects, FluentValidation rules, and repository abstractions.
-3. **AgenticBoard.Infrastructure**: EF Core `DbContext`, database migrations, SQL Server provider configuration, cryptographic password hashing, and JWT token issuance.
-4. **AgenticBoard.Api**: ASP.NET Core Web API controllers, custom exception handling middleware producing RFC 7807 `ProblemDetails`, Swagger/OpenAPI documentation, CORS, and health checks.
-5. **AgenticBoard.Tests**: Unit and integration test suites covering authentication, project membership boundaries, task state transitions, and audit logging.
+1. **`AgenticBoard.Domain`**: Pure domain entities (`User`, `Project`, `ProjectMember`, `TaskItem`, `TaskComment`, `AuditLog`), enums, and domain invariants. Zero external dependencies.
+2. **`AgenticBoard.Application`**: Use cases, DTOs, FluentValidation rules, and application services.
+3. **`AgenticBoard.Infrastructure`**: EF Core `DbContext`, database configurations, migrations, cryptographic password hashing (PBKDF2/BCrypt), and JWT generation.
+4. **`AgenticBoard.Api`**: ASP.NET Core Web API controllers, RFC 7807 `ProblemDetails` exception middleware, Swagger/OpenAPI documentation, and CORS configuration.
+5. **`AgenticBoard.Tests`**: 42 automated unit and integration tests verifying domain invariants, multi-tenant boundaries, and workflow transitions.
+6. **`frontend/`**: Angular 20 Standalone components with Angular Signals, CDK Drag and Drop, and Tailwind CSS.
 
 ---
 
-## ✨ Core Features
+## 🌐 API Endpoints Catalog
 
-- 🔐 **Authentication & Security**: Secure user registration, login, PBKDF2/BCrypt password hashing, JWT bearer tokens, and route protection.
-- 📁 **Project Management**: Multi-user project creation, role-based membership (`Owner` vs. `Member`), member management, and tenant isolation.
-- 📋 **Task Management**: Full task lifecycle (`Backlog`, `Todo`, `InProgress`, `Review`, `Done`), priority levels (`Low`, `Medium`, `High`, `Critical`), and assignment validation.
-- 📊 **Kanban Board**: Dynamic Kanban view with Angular CDK Drag & Drop, state persistence, and real-time column grouping.
-- 💬 **Task Discussions**: Rich comment stream per task with author attribution, timestamps, and membership security.
-- 📜 **Auditable Activity Log**: Automatic auditing of significant domain events (`TaskCreated`, `StatusChanged`, `PriorityChanged`, `AssignedUserChanged`, `CommentAdded`, etc.).
-- 🐳 **Docker & DevOps**: Multi-stage Dockerfiles for backend and frontend, `docker-compose` environment with SQL Server, and automated GitHub Actions CI pipeline.
+All endpoints require JWT Bearer authentication except `/api/auth/register` and `/api/auth/login`.
 
----
+### Authentication (`/api/auth`)
+| Method | Endpoint | Description | Status Codes |
+| :--- | :--- | :--- | :--- |
+| `POST` | `/api/auth/register` | Register a new user | 201, 400, 409 |
+| `POST` | `/api/auth/login` | Authenticate and receive JWT token | 200, 400, 401 |
+| `GET` | `/api/auth/me` | Retrieve profile of authenticated user | 200, 401 |
 
-## 📂 Repository Structure
+### Projects (`/api/projects`)
+| Method | Endpoint | Description | Status Codes |
+| :--- | :--- | :--- | :--- |
+| `GET` | `/api/projects` | List all projects where user is owner or member | 200, 401 |
+| `POST` | `/api/projects` | Create a new project (caller becomes Owner) | 201, 400, 401 |
+| `GET` | `/api/projects/{id}` | Get project details including members | 200, 403, 404 |
+| `PUT` | `/api/projects/{id}` | Update project name / description (Owner only) | 200, 400, 403, 404 |
+| `POST` | `/api/projects/{id}/members` | Add a member by email (Owner only) | 200, 400, 403, 404 |
+| `DELETE` | `/api/projects/{id}/members/{userId}` | Remove a member from project (Owner only) | 204, 403, 404 |
 
-```text
-.
-├── .github/workflows/      # Automated CI/CD pipelines
-├── specs/                  # Formal specifications (spec-driven development)
-│   ├── 001-authentication.md
-│   ├── 002-project-management.md
-│   ├── 003-task-management.md
-│   ├── 004-kanban-board.md
-│   ├── 005-comments.md
-│   └── 006-audit-log.md
-├── plans/                  # Technical implementation plans
-├── reviews/                # Post-implementation AI/Agent code reviews
-├── backend/
-│   ├── AgenticBoard.Api/            # ASP.NET Core Web API host
-│   ├── AgenticBoard.Application/    # Business logic, DTOs, validations
-│   ├── AgenticBoard.Domain/         # Core domain entities & enums
-│   ├── AgenticBoard.Infrastructure/ # EF Core, DB migrations, JWT
-│   ├── AgenticBoard.Tests/          # Unit & integration test suites
-│   ├── AgenticBoard.sln             # .NET 8 Solution
-│   └── Dockerfile                   # Multi-stage backend build
-├── frontend/
-│   ├── src/                         # Angular 20 Standalone source
-│   ├── Dockerfile                   # Nginx production build
-│   └── nginx.conf                   # Reverse proxy & SPA routing
-├── docker-compose.yml       # Local containerized orchestration
-├── AGENTS.md                # Agent instructions & strict engineering rules
-├── CONTRIBUTING.md          # Contribution guidelines
-├── LICENSE                  # MIT License
-└── README.md                # Project documentation
-```
+### Tasks (`/api/tasks` & `/api/projects/{id}/tasks`)
+| Method | Endpoint | Description | Status Codes |
+| :--- | :--- | :--- | :--- |
+| `GET` | `/api/projects/{id}/tasks` | List all tasks for a project | 200, 403, 404 |
+| `POST` | `/api/projects/{id}/tasks` | Create a task within project | 201, 400, 403, 404 |
+| `GET` | `/api/tasks/{id}` | Get task details with comments | 200, 403, 404 |
+| `PUT` | `/api/tasks/{id}` | Update task title, description, status, priority, assignee | 200, 400, 403, 404 |
+| `PATCH`| `/api/tasks/{id}/status` | Move task to a new status (Kanban drag-and-drop) | 200, 400, 403, 404 |
+| `PATCH`| `/api/tasks/{id}/assignment` | Assign or unassign a member to the task | 200, 400, 403, 404 |
+| `DELETE`| `/api/tasks/{id}` | Delete task | 204, 403, 404 |
+
+### Comments (`/api/tasks/{id}/comments`)
+| Method | Endpoint | Description | Status Codes |
+| :--- | :--- | :--- | :--- |
+| `GET` | `/api/tasks/{taskId}/comments` | List all comments on a task | 200, 403, 404 |
+| `POST` | `/api/tasks/{taskId}/comments` | Post a comment on a task | 201, 400, 403, 404 |
+
+### Activity & Audit Trail (`/api/projects/{id}/activity`)
+| Method | Endpoint | Description | Status Codes |
+| :--- | :--- | :--- | :--- |
+| `GET` | `/api/projects/{projectId}/activity` | Chronological activity log for a project | 200, 403, 404 |
 
 ---
 
 ## 🚀 Getting Started
 
-### Prerequisites
-- [.NET 8 SDK](https://dotnet.microsoft.com/download/dotnet/8.0)
-- [Node.js (v20+ or v22+)](https://nodejs.org/)
-- [Docker & Docker Compose](https://www.docker.com/)
+### Option A: Running with Docker Compose (Recommended)
 
----
-
-### Running with Docker Compose (Recommended)
-
-To run the entire system (SQL Server, .NET API, and Angular Frontend) in isolated containers:
+Run the entire stack in containers (SQL Server 2022, .NET 8 Web API, and Angular 20 Frontend with Nginx reverse proxy):
 
 ```bash
 docker compose up -d --build
 ```
 
-- **Frontend**: [http://localhost:4200](http://localhost:4200)
-- **Backend API & Swagger**: [http://localhost:5000/swagger](http://localhost:5000/swagger)
-- **SQL Server**: `localhost:1433`
+- **Frontend App**: [http://localhost:4200](http://localhost:4200)
+- **Backend API & Swagger Docs**: [http://localhost:5000/swagger](http://localhost:5000/swagger)
+- **SQL Server 2022**: `localhost:1433` (User: `sa`, Password: `AgenticBoard@Pass123`)
+
+#### Quick Demo Accounts (Ready to Test)
+- **Alex Morgan** (Owner): `alex@agenticboard.dev` / `Pass123!`
+- **Jordan Lee** (Developer): `jordan@agenticboard.dev` / `Pass123!`
+*(You can also use the one-click "Demo Fill" buttons on the Login page)*
 
 ---
 
-### Running Locally for Development
+### Option B: Running Locally for Development
 
-#### 1. Start SQL Server (or use Docker)
+#### 1. Start SQL Server
 ```bash
 docker run -e "ACCEPT_EULA=Y" -e "MSSQL_SA_PASSWORD=AgenticBoard@Pass123" -p 1433:1433 --name agenticboard-sql -d mcr.microsoft.com/mssql/server:2022-latest
 ```
@@ -145,10 +156,9 @@ docker run -e "ACCEPT_EULA=Y" -e "MSSQL_SA_PASSWORD=AgenticBoard@Pass123" -p 143
 ```bash
 cd backend
 dotnet restore
-dotnet ef database update --project AgenticBoard.Infrastructure --startup-project AgenticBoard.Api
 dotnet run --project AgenticBoard.Api
 ```
-The API will be available at `http://localhost:5000` (or `https://localhost:5001`).
+The API will start at `http://localhost:5000` with Swagger at `http://localhost:5000/swagger`.
 
 #### 3. Run Frontend
 ```bash
@@ -162,26 +172,25 @@ The application will launch at `http://localhost:4200`.
 
 ## 🧪 Testing
 
-### Backend Unit & Integration Tests
+### Backend Unit & Integration Tests (42 Tests)
 ```bash
-cd backend
-dotnet test --logger "console;verbosity=detailed"
+dotnet test backend/AgenticBoard.sln
 ```
 
-### Frontend Tests
+### Frontend Production Build
 ```bash
 cd frontend
-npm test -- --watch=false --browsers=ChromeHeadless
+npm run build
 ```
 
 ---
 
-## 🔒 Security Architecture
+## 🔒 Security & Data Governance
 
-- **Zero-Trust Backend**: Frontend guards protect UX; the backend validates every request's JWT identity and verifies that the user is an active member or owner of the target project before mutating or querying data.
-- **Cryptographic Password Security**: Passwords are never stored in plaintext and are hashed using secure salted PBKDF2/BCrypt.
-- **Centralized Exception Handling**: Production environments return standardized RFC 7807 `ProblemDetails` payloads without exposing internal stack traces or database schema details.
-- **Input Sanitization & Validation**: All incoming requests pass through strict `FluentValidation` pipelines before hitting domain logic.
+- **Zero-Trust Multi-Tenancy**: Project membership is strictly enforced on the server. Foreign tenant requests return RFC 7807 `403 Forbidden` ProblemDetails.
+- **Cryptographically Salted Hashing**: PBKDF2 with HMAC-SHA256 and high-entropy 128-bit salt. Plaintext passwords are never saved.
+- **Append-Only Audit Trail**: Real-time auditing records every creation, status transition, priority change, reassignment, and comment without deletion capabilities.
+- **Safe Input Binding**: All inputs are validated via `FluentValidation` before business execution.
 
 ---
 
