@@ -1,0 +1,55 @@
+services:
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: agenticboard-sql
+    environment:
+      ACCEPT_EULA: "Y"
+      MSSQL_SA_PASSWORD: "AgenticBoard@Pass123"
+      MSSQL_PID: "Developer"
+    ports:
+      - "1433:1433"
+    healthcheck:
+      test: ["CMD-SHELL", "/opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P AgenticBoard@Pass123 -C -Q 'SELECT 1' || /opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P AgenticBoard@Pass123 -Q 'SELECT 1'"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 15s
+    networks:
+      - agenticboard-network
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: agenticboard-backend
+    ports:
+      - "5000:8080"
+    environment:
+      ASPNETCORE_ENVIRONMENT: "Development"
+      ConnectionStrings__DefaultConnection: "Server=sqlserver,1433;Database=AgenticBoardDb;User Id=sa;Password=AgenticBoard@Pass123;TrustServerCertificate=True;MultipleActiveResultSets=true;"
+      JwtSettings__SecretKey: "AgenticBoard_Super_Secret_Key_For_Development_Tokens_2026_AtLeast32BytesLong!"
+      JwtSettings__Issuer: "AgenticBoard"
+      JwtSettings__Audience: "AgenticBoard"
+      JwtSettings__ExpiryMinutes: "1440"
+      Cors__AllowedOrigins: "http://localhost:4200,http://localhost:5000"
+    depends_on:
+      sqlserver:
+        condition: service_healthy
+    networks:
+      - agenticboard-network
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: agenticboard-frontend
+    ports:
+      - "4200:80"
+    depends_on:
+      - backend
+    networks:
+      - agenticboard-network
+
+networks:
+  agenticboard-network:
+    driver: bridge
