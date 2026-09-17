@@ -113,6 +113,7 @@ public class ProjectService : IProjectService
         var projects = await _context.Projects
             .AsNoTracking()
             .Where(p => p.Members.Any(m => m.UserId == currentUserId))
+            .OrderByDescending(p => p.CreatedAt)
             .Select(p => new ProjectDto(
                 p.Id,
                 p.Name,
@@ -124,7 +125,6 @@ public class ProjectService : IProjectService
                 p.Members.Count,
                 p.Tasks.Count
             ))
-            .OrderByDescending(p => p.CreatedAt)
             .ToListAsync(cancellationToken);
 
         return projects;
