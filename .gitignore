@@ -1,0 +1,48 @@
+## .NET / C#
+bin/
+obj/
+*.user
+*.userosscache
+*.sln.docstates
+.vs/
+.vscode/
+*.DotSettings.user
+TestResults/
+*.suo
+*.userprefs
+*.pidb
+*.booproj
+*.svclog
+appsettings.Development.json
+!backend/AgenticBoard.Api/appsettings.Development.json
+
+## Node & Frontend
+node_modules/
+dist/
+.angular/
+.vite/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+*.log
+
+## Environments & Secrets
+.env
+.env.local
+.env.*.local
+*.pem
+*.key
+*.pfx
+
+## OS & Editors
+.DS_Store
+Thumbs.db
+Desktop.ini
+*.swp
+*.bak
+*~
+.idea/
+
+## Docker / Volumes
+mssql-data/
