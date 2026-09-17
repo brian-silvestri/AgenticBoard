@@ -110,7 +110,7 @@ using (var scope = app.Services.CreateScope())
     }
     catch (Exception ex)
     {
-        logger.LogWarning(ex, "Database seeding warning: could not connect or apply migrations to relational DB. Continuing with in-memory or fallback state.");
+        logger.LogError(ex, "Database initialization failure: could not connect or apply migrations to relational DB.");
     }
 }
 
