@@ -1,5 +1,8 @@
+using System.Text.Json.Serialization;
+
 namespace AgenticBoard.Domain.Enums;
 
+[JsonConverter(typeof(JsonStringEnumConverter))]
 public enum TaskItemStatus
 {
     Backlog = 1,
